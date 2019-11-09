@@ -1,3 +1,3 @@
-## Welcome to CTIX Systems: Notes on cyber threat intelligence and analytics
+- [Sysmon log monitoring on Azure Log Analytics](./sysmon-loganalytics/)
 
 
