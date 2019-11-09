@@ -1,6 +1,8 @@
+---
 layout: page
 title: "Configuring Azure log analytics to consume sysmon telemetry"
 permalink: /sysmon-loganalytics/
+---
 
 # Getting sysmon logs in to Azure log analytics
 
