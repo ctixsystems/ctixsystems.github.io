@@ -1,4 +1,5 @@
 ---
+theme: jekyll-theme-slate
 layout: page
 title: "Configuring Azure log analytics to consume sysmon telemetry"
 permalink: /sysmon-loganalytics/
