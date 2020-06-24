@@ -5,8 +5,8 @@
 ## What
 
 My son gifted me a wonderful, custom built keyboard. It is a dztech,
-65% RGB with XXX keys, XXX keycaps and QMK firmware. This firmware
-allows you to define custom keymaps # Guide to QMK configuration
+65% RGB with zealios v2 67g tactile switches, GMK carbon keycaps and
+QMK firmware. This firmware allows you to define custom keymaps 
 and updates by flashing the onboard controller.
 
 ## Why

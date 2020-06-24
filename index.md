@@ -1,3 +1,5 @@
+- [QMK keyboard configuration and flashing](./qmk/)
+- [RTL-SDR](./rtl-sdr/)
 - [Sysmon log monitoring on Azure Log Analytics](./sysmon-loganalytics/)
 - [Zeek log monitoring on Azure Log Analytics](./zeek-loganalytics/)
 
