@@ -1,3 +1,4 @@
+- [CRoss compile SNMPD for Orbi](./cross-tools-net-snmp/)
 - [QMK keyboard configuration and flashing](./qmk/)
 - [RTL-SDR](./rtl-sdr/)
 - [Sysmon log monitoring on Azure Log Analytics](./sysmon-loganalytics/)
