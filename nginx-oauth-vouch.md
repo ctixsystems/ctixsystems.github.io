@@ -29,7 +29,7 @@ When creating the docker configurations for nginx and vouch, you include the
 ```--network=oauthnet``` so that these systems are connected. This can be
 verified as follows:
 
-```bash
+```js
 [
     {
         "Name": "oauthnet",
@@ -97,7 +97,7 @@ docker create --name=nginx --network=oauthnet \
 
 Configure using the following:
 
-```
+```yaml
 server {
 
         listen 443 default_server ssl;
@@ -171,7 +171,7 @@ docker create --name=vouch --network=oauthnet \
 
 Configure vouch as follows:
 
-```
+```yaml
 vouch:
   logLevel: debug
   listen: 0.0.0.0
