@@ -1,3 +1,10 @@
+---
+layout: default
+title: "nginx, oauth, vouch using AzureAD"
+permalink: /nginx-oauth-vouch/
+---
+
+
 # Implementing OAuth2 via NGINX and Vouch-Proxy
 
 ## Infrastructure
