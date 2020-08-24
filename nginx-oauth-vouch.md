@@ -83,6 +83,9 @@ reach each other on addresses 172.19.0.3 and 172.19.0.2 respectively.
 ### Create docker instances for nginx and vouch oauth2
 
 #### nginx
+
+Create the docker machine as follows:
+
 ```bash
 docker create --name=nginx --network=oauthnet \
     -e PUID=1000 -e PGID=1000 \
@@ -92,7 +95,71 @@ docker create --name=nginx --network=oauthnet \
     linuxserver/nginx
 ```
 
+Configure using the following:
+
+```
+server {
+
+        listen 443 default_server ssl;
+        server_name YOUR.DOMAIN.NAME;
+
+        ssl_certificate /config/keys/cert.crt;
+        ssl_certificate_key /config/keys/cert.key;
+        ssl_client_certificate /config/keys/CTIX-cacert.pem;
+        ssl_verify_client on;
+
+        auth_request /validate;
+
+        root /config/www;
+        index index.html index.htm index.php;
+
+        location /validate {
+                proxy_pass http://vouch:9090/validate;
+                proxy_set_header Host $http_host;
+                proxy_pass_request_body off;
+                proxy_set_header Content-Length "";
+                auth_request_set $auth_resp_x_vouch_user $upstream_http_x_vouch_user;
+                auth_request_set $auth_resp_jwt $upstream_http_x_vouch_jwt;
+                auth_request_set $auth_resp_err $upstream_http_x_vouch_err;
+                auth_request_set $auth_resp_failcount $upstream_http_x_vouch_failcount;
+        }
+
+        error_page 401 = @error401;
+
+        location @error401 {
+                return 302 https://vouch.DOMAIN.NAME/login?url=$scheme://$http_host$request_uri&vouch-failcount=$auth_resp_failcount&X-Vouch-Token=$auth_resp_jwt&error=$auth_resp_err;
+
+        }
+        location / {
+                if ($ssl_client_verify != SUCCESS) {
+                  return 403;
+                }
+                # try_files $uri $uri/ /index.html /index.php?$args =404;
+                proxy_pass https://PROTECTED_RESOURCE;
+        }
+
+}
+
+server {
+        listen 443 ssl http2;
+        server_name vouch.DOMAIN.NAME
+        ssl_certificate /config/keys/cert.crt;
+        ssl_certificate_key /config/keys/cert.key;
+        ssl_client_certificate /config/keys/CTIX-cacert.pem;
+        ssl_verify_client on;
+
+        location / {
+                proxy_pass http://vouch:9090;
+                proxy_set_header Host vouch.ctix.systems;
+        }
+
+}
+```
+
 #### vouch
+
+Create the docker machine as follows:
+
 ```bash
 docker create --name=vouch --network=oauthnet \
     -e PUID=1000 -e PGID=1000 \
@@ -102,6 +169,46 @@ docker create --name=vouch --network=oauthnet \
     voucher/vouch-proxy
 ```
 
+Configure vouch as follows:
+
+```
+vouch:
+  logLevel: debug
+  listen: 0.0.0.0
+  port: 9090
+  allowAllUsers: true
+  cookie:
+    name: VouchCookie
+    domain: DOMAIN.NAME
+    secure: false
+    httpOnly: true
+    maxAge: 14400
+  session:
+    name: VouchSession
+  headers:
+    querystring: access_token
+    redirect: X-Vouch-Requested-URI
+    idToken: X-Vouch-IdP-IdToken
+    claims:
+      - groups
+      - given_name
+      - accesstoken
+      - idtoken
+oauth:
+  provider: azure
+  client_id: XXXXXXXXXXXXXXXXXXXXXXX
+  client_secret: XXXXXXXXXXXXXXXXXXX
+  auth_url: https://login.microsoftonline.com/XXXXXXXXXX/oauth2/v2.0/authorize
+  token_url: https://login.microsoftonline.com/XXXXXXXXX/oauth2/v2.0/token
+  user_info_url: https://graph.microsoft.com/oidc/userinfo
+  scopes:
+    - openid
+    - email
+    - profile
+  callback_urls:
+    - https://vouch.DOMAIN.NAME/auth
+
+```
 ## Information flows
 - Internet to NGINX (via mTLS)
 - NGINX to Vouch (via auth-request)
